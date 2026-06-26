@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hash</title>
+    <!-- Include lz-string for compression -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 1;
+        }
+        /* Invisible overlay to capture clicks for URL generation */
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 20px;
+            color: rgba(255, 255, 255, 0.2);
+            font-family: monospace;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe src="https://matias.ma/nsfw/"></iframe>
+    <div id="overlay">Click anywhere to shorten a URL</div>
+
+    <script>
+        // Check if there is a hash fragment
+        const hash = window.location.hash.substring(1);
+        
+        if (hash) {
+            // Attempt to decode and redirect
+            try {
+                const decoded = LZString.decompressFromEncodedURIComponent(hash);
+                if (decoded && (decoded.startsWith('http://') || decoded.startsWith('https://'))) {
+                    // Redirect without keeping this page in history
+                    window.location.replace(decoded);
+                } else {
+                    console.error("Invalid decoded URL.");
+                }
+            } catch (e) {
+                console.error("Failed to decode hash.", e);
+            }
+        }
+
+        // Logic for creating short URLs on click
+        document.getElementById('overlay').addEventListener('click', () => {
+            const url = prompt('Enter a long URL to shorten (must include http:// or https://):');
+            if (url) {
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    alert('Invalid URL! Must start with http:// or https://');
+                    return;
+                }
+                const compressed = LZString.compressToEncodedURIComponent(url);
+                const shortUrl = window.location.origin + window.location.pathname + '#' + compressed;
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(shortUrl).then(() => {
+                    alert('Shortened URL copied to clipboard!\n\n' + shortUrl);
+                }).catch(err => {
+                    prompt('Failed to copy automatically. Copy the shortened URL below:', shortUrl);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
