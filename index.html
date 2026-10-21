@@ -1,104 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hash</title>
-    <!-- Include lz-string for compression -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-        }
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            z-index: 1;
-        }
-        #shorten-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        #shorten-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hash</title>
+  <style>
+    body { font: 18px/1.5 system-ui, sans-serif; max-width: 38rem; margin: 12vh auto; padding: 0 1.5rem; color: #17232b; }
+    h1 { font-size: 2.5rem; }
+    a { color: #176e53; }
+  </style>
+  <script src="./lz-string.min.js"></script>
 </head>
 <body>
-    <iframe src="https://matias.ma/nsfw/"></iframe>
-    <button id="shorten-btn" title="Shorten a URL">🔗</button>
-
-    <script>
-        function checkAndRedirect() {
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                try {
-                    const decoded = LZString.decompressFromEncodedURIComponent(hash);
-                    if (decoded && (decoded.startsWith('http://') || decoded.startsWith('https://'))) {
-                        window.location.replace(decoded);
-                    }
-                } catch (e) {
-                    console.error("Failed to decode hash.", e);
-                }
-            }
+  <h1>hash has moved to the CLI.</h1>
+  <p>For new short links, install <a href="https://www.npmjs.com/package/@theshantanujoshi/hash">@theshantanujoshi/hash</a> and run <code>hash-links serve</code>. Previously created fragment links still redirect here.</p>
+  <p id="error" role="status"></p>
+  <script>
+    if (location.hash.length > 1) {
+      const decoded = LZString.decompressFromEncodedURIComponent(location.hash.slice(1));
+      try {
+        const target = new URL(decoded);
+        if (['http:', 'https:'].includes(target.protocol) && !target.username && !target.password) {
+          location.replace(target.href);
+        } else {
+          document.getElementById('error').textContent = 'This link is not valid.';
         }
-
-        // Check on initial load
-        checkAndRedirect();
-
-        // Check if user pastes the URL in the same tab
-        window.addEventListener('hashchange', checkAndRedirect);
-
-        // Logic for creating short URLs
-        document.getElementById('shorten-btn').addEventListener('click', () => {
-            let url = prompt('Enter a long URL to shorten:');
-            
-            if (url) {
-                // Auto-prepend https:// if missing
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-
-                const compressed = LZString.compressToEncodedURIComponent(url);
-                const baseUrl = window.location.href.split('#')[0];
-                const shortUrl = baseUrl + '#' + compressed;
-                
-                // Copy to clipboard
-                if (navigator.clipboard && window.isSecureContext) {
-                    navigator.clipboard.writeText(shortUrl).then(() => {
-                        alert('Shortened URL copied to clipboard!\n\n' + shortUrl);
-                    }).catch(err => {
-                        prompt('Failed to copy automatically. Copy the shortened URL below:', shortUrl);
-                    });
-                } else {
-                    // Fallback for non-secure contexts (e.g. file:// protocol testing)
-                    prompt('Copy the shortened URL below:', shortUrl);
-                }
-            }
-        });
-    </script>
+      } catch {
+        document.getElementById('error').textContent = 'This link is not valid.';
+      }
+    }
+  </script>
 </body>
 </html>

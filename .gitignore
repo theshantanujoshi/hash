@@ -1,0 +1,5 @@
+node_modules/
+.pack-smoke*/
+*.tgz
+hash-links.json
+hash-links.json.*.tmp
