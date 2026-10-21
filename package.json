@@ -1,13 +1,15 @@
 {
   "name": "@theshantanujoshi/hash",
-  "version": "0.1.0",
-  "description": "A self-hosted URL shortener CLI",
+  "version": "0.1.1",
+  "description": "Self-hosted URL shortener CLI with persistent links and a redirect server",
+  "keywords": ["cli", "url-shortener", "short-links", "self-hosted", "nodejs"],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/theshantanujoshi/hash.git"
   },
   "homepage": "https://github.com/theshantanujoshi/hash#readme",
+  "bugs": { "url": "https://github.com/theshantanujoshi/hash/issues" },
   "engines": { "node": ">=20" },
   "bin": { "hash-links": "bin/hash-links.cjs" },
   "files": ["bin", "lib", "LICENSE", "README.md"],
