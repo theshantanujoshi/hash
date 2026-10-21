@@ -41,7 +41,7 @@ test('creates a short link, redirects, and survives restart', async () => {
   }
 });
 
-test('rejects invalid destinations and serves the UI and legacy decoder', async () => {
+test('rejects invalid destinations and has no web UI', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hash-test-'));
   const server = createShortener({ dataFile: path.join(dir, 'links.json'), baseUrl: 'http://localhost:3000' });
   try {
@@ -53,10 +53,8 @@ test('rejects invalid destinations and serves the UI and legacy decoder', async 
     }
     const huge = await fetch(`${local}/api/links`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: 'https://example.com/' + 'x'.repeat(9000) }) });
     assert.equal(huge.status, 413);
-    assert.equal((await fetch(local)).status, 200);
-    const decoder = await fetch(`${local}/lz-string.min.js`);
-    assert.equal(decoder.status, 200);
-    assert.match(await decoder.text(), /LZString/);
+    assert.equal((await fetch(local)).status, 404);
+    assert.equal((await fetch(`${local}/lz-string.min.js`)).status, 404);
     assert.equal((await fetch(`${local}/missing`)).status, 404);
   } finally {
     await new Promise(resolve => server.close(resolve));

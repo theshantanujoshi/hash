@@ -1,7 +1,7 @@
 {
   "name": "@theshantanujoshi/hash",
   "version": "0.1.0",
-  "description": "A small, self-hosted URL shortener",
+  "description": "A self-hosted URL shortener CLI",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -10,9 +10,8 @@
   "homepage": "https://github.com/theshantanujoshi/hash#readme",
   "engines": { "node": ">=20" },
   "bin": { "hash-links": "bin/hash-links.cjs" },
-  "exports": { ".": "./lib/server.cjs" },
-  "files": ["bin", "lib", "public", "LICENSE", "README.md"],
+  "files": ["bin", "lib", "LICENSE", "README.md"],
   "scripts": { "test": "node --test" },
-  "dependencies": { "lz-string": "^1.5.0" },
+  "devDependencies": { "lz-string": "^1.5.0" },
   "publishConfig": { "access": "public" }
 }
